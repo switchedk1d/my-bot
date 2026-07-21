@@ -9,8 +9,8 @@ from datetime import datetime
 # ================================================
 # НАСТРОЙКИ
 # ================================================
-BOT_TOKEN = '8731103715:AAENjKYBq8rN7dwVU8gLKBz-X_ixIAmazdY'
-PHONE_API_KEY = 'ok_7f681d2b7d574e4e5d8185bf5df6ba57'
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+PHONE_API_KEY = os.getenv('PHONE_API_KEY')
 
 # Коды стран для локальной проверки
 COUNTRY_CODES = {
