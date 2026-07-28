@@ -396,9 +396,9 @@ def main_menu():
 @bot.message_handler(commands=['start', 'help'])
 def start_cmd(message):
     bot.send_message(message.chat.id,
-        "🔍 *switchprob @hinewrock*\nВыбери действие:"
-        parse_mode='Markdown',
-        reply_markup=main_menu())
+    "🔍 switchprob @hinewrock\nВыбери действие:",
+    parse_mode='Markdown',
+    reply_markup=main_menu())
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call):
