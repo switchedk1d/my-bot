@@ -396,7 +396,7 @@ def main_menu():
 @bot.message_handler(commands=['start', 'help'])
 def start_cmd(message):
     bot.send_message(message.chat.id,
-        "🔍 *БОТ-ПРОВЕРЩИК v6.1*\nВыбери действие:",
+        "🔍 *switchprob @hinewrock*\nВыбери действие:"
         parse_mode='Markdown',
         reply_markup=main_menu())
 
@@ -525,7 +525,7 @@ def stats_cmd(message):
 # ================================================
 
 print("=" * 50)
-print("  🤖 БОТ-ПРОВЕРЩИК @hinewrock (ПОЛНАЯ ВЕРСИЯ)")
+print("  🤖 switchprob @hinewrock")
 print("=" * 50)
 print("✅ Бот запущен на Railway!")
 print("📌 Определяет: оператора, тип номера, страну")
