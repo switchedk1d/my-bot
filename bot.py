@@ -15,9 +15,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # ================================================
 # НАСТРОЙКИ (ЧЕРЕЗ ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ)
 # ================================================
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-PHONE_API_KEY = os.getenv('PHONE_API_KEY')
-ADMIN_CHAT_ID = int(os.getenv('ADMIN_CHAT_ID', 6482365079))
+BOT_TOKEN = '8731103715:AAENjKYBq8rN7dwVU8gLKBz-X_ixIAmazdY'
+PHONE_API_KEY = 'ok_7f681d2b7d574e4e5d8185bf5df6ba57'
+ADMIN_CHAT_ID = 6482365079
 # ================================================
 
 session = requests.Session()
