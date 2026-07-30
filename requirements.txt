@@ -1,3 +1,5 @@
 pyTelegramBotAPI
 requests
+phonenumbers
+dnspython
 python-whois
