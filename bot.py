@@ -21,9 +21,6 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 BOT_TOKEN = '8731103715:AAENjKYBq8rN7dwVU8gLKBz-X_ixIAmazdY'
 PHONE_API_KEY = 'ok_7f681d2b7d574e4e5d8185bf5df6ba57'
 ADMIN_ID = 6482365079
-
-# БЕСПЛАТНЫЕ API КЛЮЧИ (ЗАРЕГИСТРИРУЙСЯ НА САЙТАХ)
-#ABSTRACT_KEY = '69d30601af8a44418496d7529a5df892'
 IPQS_KEY = 'wAqwCtriEodmMTT92ERWYggHKJllfjf'
 ABUSEIPDB_KEY = 'fa4eaac39bf03569bdccde0d10d1a1da8c611afc4a93dd6d2c1fe91d30f56ee84b28575a327aed1c'
 VT_KEY = 'be43b5c3973f77fe225d0d4a7cf4659d91e94b5c854ec1038576d67be0856640'
