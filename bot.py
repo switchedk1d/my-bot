@@ -249,7 +249,7 @@ except Exception as e:
     
     breaches_text = "\n".join([f"   • {b}" for b in result['breaches']]) if result['breaches'] else "   • Не найдено"
     
-    return (
+     return (
         f"📱 *СУПЕР-ПРОВЕРКА НОМЕРА*\n"
         f"━━━━━━━━━━━━━━━━━━━━━━\n"
         f"{status_icon} *Статус:* {status_text}\n"
