@@ -114,21 +114,21 @@ def check_phone_super(phone):
             result['country'] = result['country'] if result['country'] != 'Неизвестно' else country
             result['country_code'] = code
             break
-    
     # ==========================================
-    # 1.3 OMKAR.CLOUD API
-    # ==========================================
-    try:
+# 1.3 OMKAR.CLOUD API
+# ==========================================
+try:
     url = f"https://carrier-lookup-api.omkar.cloud/lookup?phone={formatted}"
     headers = {'API-Key': PHONE_API_KEY}
     response = requests.get(url, headers=headers, timeout=8, verify=False)
-    print(f"Omkar response: {response.status_code}")  # ← ДОБАВЬ
     data = response.json()
     if data.get('is_valid_number', False):
         result['valid'] = True
-        # ...
+        result['carrier_info'] = data.get('carrier', 'Неизвестно')
+        result['line_type'] = data.get('line_type', 'Неизвестно')
+        result['sources'].append('omkar')
 except Exception as e:
-    print(f"Omkar error: {e}")  # ← ДОБАВЬ
+    pass
     
     # ==========================================
     # 1.4 NUMVERIFY API
