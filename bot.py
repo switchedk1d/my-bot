@@ -287,7 +287,7 @@ f"📊 *Активность:* {result['is_active']}\n"
 def check_email_super(email):
     """МЕГА-ПРОВЕРКА EMAIL через 8+ источников"""
     
-    result = {
+     result = {
         'email': email,
         'domain': email.split('@')[1].lower() if '@' in email else '',
         'valid_format': False,
@@ -437,57 +437,57 @@ def check_email_super(email):
          #   pass
     
     # ==========================================
-    # 2.11 ФОРМИРОВАНИЕ ОТВЕТА
-    # ==========================================
-    if result['valid_format'] and result['mx_exists'] and result['smtp_status'] == '✅ Существует':
-        status_icon = "✅"
-        status_text = "ВАЛИДНЫЙ (РЕАЛЬНЫЙ)"
-    elif result['valid_format'] and result['domain_exists'] and result['mx_exists']:
-        status_icon = "⚠️"
-        status_text = "ФОРМАТ И ДОМЕН ВЕРНЫ, НО ПОЧТА НЕ ПРОВЕРЕНА"
-    elif result['valid_format']:
-        status_icon = "⚠️"
-        status_text = "ФОРМАТ ВЕРЕН, НО ДОМЕН НЕ СУЩЕСТВУЕТ"
-    else:
-        status_icon = "❌"
-        status_text = "НЕВАЛИДНЫЙ ФОРМАТ"
-    
-    if result['fraud_score'] >= 80:
-        risk_text = "🔴 ВЫСОКИЙ РИСК"
-    elif result['fraud_score'] >= 50:
-        risk_text = "🟡 СРЕДНИЙ РИСК"
-    else:
-        risk_text = "🟢 НИЗКИЙ РИСК"
-    
-    if result['age'] != 'Неизвестно':
-        age_text = f"{result['age']} дней" if result['age'] < 365 else f"{result['age'] // 365} лет"
-    else:
-        age_text = "Неизвестно"
-    
-    breaches_text = "\n".join([f"   • {b}" for b in result['breaches']]) if result['breaches'] else "   • Не найдено"
+# 2.11 ФОРМИРОВАНИЕ ОТВЕТА
+# ==========================================
+if result['valid_format'] and result['mx_exists'] and result['smtp_status'] == '✅ Существует':
+    status_icon = "✅"
+    status_text = "ВАЛИДНЫЙ (РЕАЛЬНЫЙ)"
+elif result['valid_format'] and result['domain_exists'] and result['mx_exists']:
+    status_icon = "⚠️"
+    status_text = "ФОРМАТ И ДОМЕН ВЕРНЫ, НО ПОЧТА НЕ ПРОВЕРЕНА"
+elif result['valid_format']:
+    status_icon = "⚠️"
+    status_text = "ФОРМАТ ВЕРЕН, НО ДОМЕН НЕ СУЩЕСТВУЕТ"
+else:
+    status_icon = "❌"
+    status_text = "НЕВАЛИДНЫЙ ФОРМАТ"
+
+if result['fraud_score'] >= 80:
+    risk_text = "🔴 ВЫСОКИЙ РИСК"
+elif result['fraud_score'] >= 50:
+    risk_text = "🟡 СРЕДНИЙ РИСК"
+else:
+    risk_text = "🟢 НИЗКИЙ РИСК"
+
+if result['age'] != 'Неизвестно':
+    age_text = f"{result['age']} дней" if result['age'] < 365 else f"{result['age'] // 365} лет"
+else:
+    age_text = "Неизвестно"
+
+breaches_text = "\n".join([f"   • {b}" for b in result['breaches']]) if result['breaches'] else "   • Не найдено"
 
 return (
-        f"📧 *СУПЕР-ПРОВЕРКА EMAIL*\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"{status_icon} *Статус:* {status_text}\n"
-        f"📧 *Email:* {email}\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🌐 *Домен:* {result['domain']}\n"
-        f"📡 *MX-записи:* {'✅ Есть' if result['mx_exists'] else '❌ Нет'}\n"
-        f"📬 *SMTP-проверка:* {result['smtp_status']}\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🗑️ *Временная почта:* {'✅ Да' if result['is_disposable'] else '❌ Нет'}\n"
-        f"👔 *Ролевой email:* {'✅ Да' if result['is_role'] else '❌ Нет'}\n"
-        f"📅 *Возраст домена:* {age_text}\n"
-        f"👤 *Регистратор:* {result['registrar']}\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"⚠️ *Оценка риска:* {risk_text} ({result['fraud_score']}/100)\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🔓 *Утечки данных:*\n{breaches_text}\n"
+    f"📧 *СУПЕР-ПРОВЕРКА EMAIL*\n"
     f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"📊 *Источники:* {', '.join(result['sources']) if result['sources'] else 'Только локальная проверка'}\n"
-        f"🕒 {datetime.now().strftime('%d.%m.%Y %H:%M')}"
-    )
+    f"{status_icon} *Статус:* {status_text}\n"
+    f"📧 *Email:* `{email}`\n"
+    f"━━━━━━━━━━━━━━━━━━━━━━\n"
+    f"🌐 *Домен:* {result['domain']}\n"
+    f"📡 *MX-записи:* {'✅ Есть' if result['mx_exists'] else '❌ Нет'}\n"
+    f"📬 *SMTP-проверка:* {result['smtp_status']}\n"
+    f"━━━━━━━━━━━━━━━━━━━━━━\n"
+    f"🗑️ *Временная почта:* {'✅ Да' if result['is_disposable'] else '❌ Нет'}\n"
+    f"👔 *Ролевой email:* {'✅ Да' if result['is_role'] else '❌ Нет'}\n"
+    f"📅 *Возраст домена:* {age_text}\n"
+    f"👤 *Регистратор:* {result['registrar']}\n"
+    f"━━━━━━━━━━━━━━━━━━━━━━\n"
+    f"⚠️ *Оценка риска:* {risk_text} ({result['fraud_score']}/100)\n"
+    f"━━━━━━━━━━━━━━━━━━━━━━\n"
+    f"🔓 *Утечки данных:*\n{breaches_text}\n"
+    f"━━━━━━━━━━━━━━━━━━━━━━\n"
+    f"📊 *Источники:* {', '.join(result['sources']) if result['sources'] else 'Только локальная проверка'}\n"
+    f"🕒 {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+)
 
 # ================================================================
 # 3. СУПЕР-ПРОВЕРКА КАРТЫ (~350 строк)
