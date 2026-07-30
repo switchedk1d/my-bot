@@ -285,7 +285,7 @@ f"📊 *Активность:* {result['is_active']}\n"
 # ================================================================
 
 def check_email_super(email):
-    """МЕГА-ПРОВЕРКА EMAIL через 8+ источников""".    
+    """МЕГА-ПРОВЕРКА EMAIL через 8+ источников"""    
     result = {
         'email': email,
         'domain': email.split('@')[1].lower() if '@' in email else '',
