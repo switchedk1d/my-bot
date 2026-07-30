@@ -23,7 +23,7 @@ PHONE_API_KEY = 'ok_7f681d2b7d574e4e5d8185bf5df6ba57'
 ADMIN_ID = 6482365079
 
 # БЕСПЛАТНЫЕ API КЛЮЧИ (ЗАРЕГИСТРИРУЙСЯ НА САЙТАХ)
-ABSTRACT_KEY = '69d30601af8a44418496d7529a5df892'
+#ABSTRACT_KEY = '69d30601af8a44418496d7529a5df892'
 IPQS_KEY = 'wAqwCtriEodmMTT92ERWYggHKJllfjf'
 ABUSEIPDB_KEY = 'fa4eaac39bf03569bdccde0d10d1a1da8c611afc4a93dd6d2c1fe91d30f56ee84b28575a327aed1c'
 VT_KEY = 'be43b5c3973f77fe225d0d4a7cf4659d91e94b5c854ec1038576d67be0856640'
@@ -173,31 +173,31 @@ def check_phone_super(phone):
     # 1.6 ПРОВЕРКА УТЕЧЕК (HaveIBeenPwned)
     # ==========================================
 
-if HIBP_KEY:
-        try:
-            headers = {'hibp-api-key': HIBP_KEY}
-            url = f"https://haveibeenpwned.com/api/v3/breaches?phone={clean}"
-            response = requests.get(url, headers=headers, timeout=8, verify=False)
-            if response.status_code == 200:
-                data = response.json()
-                result['breaches'] = [b.get('Name', 'Неизвестно') for b in data[:5]]
-                result['sources'].append('hibp')
-        except Exception as e:
-            pass
+#if HIBP_KEY:
+   #     try:
+         #   headers = {'hibp-api-key': HIBP_KEY}
+         #  url = f"https://haveibeenpwned.com/api/v3/breaches?phone={clean}"
+         #   response = requests.get(url, headers=headers, timeout=8, verify=False)
+         #   if response.status_code == 200:
+         #       data = response.json()
+          #      result['breaches'] = [b.get('Name', 'Неизвестно') for b in data[:5]]
+         #       result['sources'].append('hibp')
+      #  except Exception as e:
+        #    pass
     
     # ==========================================
     # 1.7 ABSTRACT API
     # ==========================================
-    if ABSTRACT_KEY:
-        try:
-            url = f"https://phonevalidation.abstractapi.com/v1/?api_key={ABSTRACT_KEY}&phone={formatted}"
-            response = requests.get(url, timeout=8, verify=False)
-            data = response.json()
-            if data.get('valid', False):
-                result['valid'] = True
-                result['sources'].append('abstract')
-        except Exception as e:
-            pass
+    #if ABSTRACT_KEY:
+     #try:
+      #      url = f"https://phonevalidation.abstractapi.com/v1/?api_key={ABSTRACT_KEY}&phone={formatted}"
+        #    response = requests.get(url, timeout=8, verify=False)
+         #   data = response.json()
+         #   if data.get('valid', False):
+         #       result['valid'] = True
+         #       result['sources'].append('abstract')
+      #  except Exception as e:
+       #     pass
     
     # ==========================================
     # 1.8 ПРОВЕРКА НА ФЕЙК
@@ -411,30 +411,30 @@ def check_email_super(email):
     # ==========================================
     # 2.9 ПРОВЕРКА УТЕЧЕК (HIBP)
     # ==========================================
-    if HIBP_KEY:
-        try:
-            headers = {'hibp-api-key': HIBP_KEY}
-            url = f"https://haveibeenpwned.com/api/v3/breachedaccount/{email}"
-            response = requests.get(url, headers=headers, timeout=8, verify=False)
-            if response.status_code == 200:
-                data = response.json()
-                result['breaches'] = [b.get('Name', 'Неизвестно') for b in data[:5]]
-                result['sources'].append('hibp')
-        except Exception as e:
-            pass
+ #   if HIBP_KEY:
+    #    try:
+         #   headers = {'hibp-api-key': HIBP_KEY}
+         #   url = f"https://haveibeenpwned.com/api/v3/breachedaccount/{email}"
+          #  response = requests.get(url, headers=headers, timeout=8, verify=False)
+          #  if response.status_code == 200:
+           #     data = response.json()
+             #   result['breaches'] = [b.get('Name', 'Неизвестно') for b in data[:5]]
+            #    result['sources'].append('hibp')
+     #   except Exception as e:
+         #   pass
     
     # ==========================================
     # 2.10 ABSTRACT API
     # ==========================================
-    if ABSTRACT_KEY:
-        try:
-            url = f"https://emailvalidation.abstractapi.com/v1/?api_key={ABSTRACT_KEY}&email={email}"
-            response = requests.get(url, timeout=8, verify=False)
-            data = response.json()
-            if data.get('deliverability'):
-                result['sources'].append('abstract')
-        except Exception as e:
-            pass
+ #   if ABSTRACT_KEY:
+    #    try:
+         #   url = f"https://emailvalidation.abstractapi.com/v1/?api_key={ABSTRACT_KEY}&email={email}"
+         #   response = requests.get(url, timeout=8, verify=False)
+          #  data = response.json()
+           # if data.get('deliverability'):
+               # result['sources'].append('abstract')
+    #    except Exception as e:
+         #   pass
     
     # ==========================================
     # 2.11 ФОРМИРОВАНИЕ ОТВЕТА
