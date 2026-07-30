@@ -283,9 +283,9 @@ f"📊 *Активность:* {result['is_active']}\n"
 # ================================================================
 # 2. СУПЕР-ПРОВЕРКА EMAIL (~450 строк)
 # ================================================================
-
 def check_email_super(email):
-    """МЕГА-ПРОВЕРКА EMAIL через 8+ источников"""    
+    """МЕГА-ПРОВЕРКА EMAIL через 8+ источников"""
+    
     result = {
         'email': email,
         'domain': email.split('@')[1].lower() if '@' in email else '',
@@ -300,42 +300,33 @@ def check_email_super(email):
         'age': 'Неизвестно',
         'registrar': 'Неизвестно',
         'breaches': [],
-        'suggestions': [],
         'sources': []
     }
     
-    # ==========================================
     # 2.1 ПРОВЕРКА ФОРМАТА
-    # ==========================================
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if re.match(pattern, email):
         result['valid_format'] = True
         result['sources'].append('format')
     
-    # ==========================================
-    # 2.2 ПРОВЕРКА ДОМЕНА (DNS)
-    # ==========================================
+    # 2.2 ПРОВЕРКА ДОМЕНА
     try:
         socket.gethostbyname(result['domain'])
         result['domain_exists'] = True
         result['sources'].append('dns')
-    except Exception as e:
+    except:
         pass
     
-    # ==========================================
     # 2.3 ПРОВЕРКА MX-ЗАПИСЕЙ
-    # ==========================================
     try:
         records = dns.resolver.resolve(result['domain'], 'MX')
         if records:
             result['mx_exists'] = True
             result['sources'].append('mx')
-    except Exception as e:
+    except:
         pass
     
-    # ==========================================
     # 2.4 SMTP-ПРОВЕРКА
-    # ==========================================
     if result['mx_exists']:
         try:
             mx_record = str(dns.resolver.resolve(result['domain'], 'MX')[0].exchange)
@@ -350,51 +341,32 @@ def check_email_super(email):
                 result['sources'].append('smtp')
             else:
                 result['smtp_status'] = '⚠️ Ящик не найден'
-        except Exception as e:
+        except:
             result['smtp_status'] = '⚠️ Ошибка SMTP'
     
-    # ==========================================
-    # 2.5 ВОЗРАСТ ДОМЕНА (WHOIS)
-    # ==========================================
+    # 2.5 ВОЗРАСТ ДОМЕНА
     try:
         w = whois.whois(result['domain'])
         if w.creation_date:
-            if isinstance(w.creation_date, list):
-                result['age'] = (datetime.now() - w.creation_date[0]).days
-            else:
-                result['age'] = (datetime.now() - w.creation_date).days
+            result['age'] = (datetime.now() - w.creation_date[0]).days if isinstance(w.creation_date, list) else (datetime.now() - w.creation_date).days
             result['registrar'] = w.registrar if w.registrar else 'Неизвестно'
             result['sources'].append('whois')
-    except Exception as e:
+    except:
         pass
     
-    # ==========================================
-    # 2.6 ВРЕМЕННАЯ ПОЧТА (DISPOSABLE)
-    # ==========================================
-    disposable_domains = [
-        'tempmail.com', '10minutemail.com', 'mailinator.com', 'yopmail.com',
-
-'guerrillamail.com', 'throwawaymail.com', 'temp-mail.org',
-        'dispostable.com', 'sharklasers.com', 'grr.la', 'guerrillamail.biz',
-        'mail-temporaire.fr', 'spambox.us', 'spam.la', 'trashmail.com',
-        'fakeinbox.com', 'tempinbox.com', 'guerrillamail.org'
-    ]
+    # 2.6 ВРЕМЕННАЯ ПОЧТА
+    disposable_domains = ['tempmail.com', '10minutemail.com', 'mailinator.com', 'yopmail.com']
     if result['domain'] in disposable_domains:
         result['is_disposable'] = True
         result['sources'].append('disposable')
     
-    # ==========================================
     # 2.7 РОЛЕВОЙ EMAIL
-    # ==========================================
     role_patterns = ['admin', 'info', 'support', 'sales', 'contact', 'help', 'abuse', 'postmaster']
-    local_part = email.split('@')[0].lower()
-    if local_part in role_patterns:
+    if email.split('@')[0].lower() in role_patterns:
         result['is_role'] = True
         result['sources'].append('role')
     
-    # ==========================================
-    # 2.8 FRAUD-ПРОВЕРКА (IPQualityScore)
-    # ==========================================
+    # 2.8 FRAUD-ПРОВЕРКА (IPQS)
     if IPQS_KEY:
         try:
             url = f"https://ipqualityscore.com/api/json/email/{IPQS_KEY}/{email}"
@@ -404,90 +376,62 @@ def check_email_super(email):
                 result['fraud_score'] = data.get('fraud_score', 0)
                 result['is_fake'] = data.get('disposable', False) or data.get('honeypot', False)
                 result['sources'].append('ipqualityscore')
-        except Exception as e:
+        except:
             pass
     
-    # ==========================================
-    # 2.9 ПРОВЕРКА УТЕЧЕК (HIBP)
-    # ==========================================
- #   if HIBP_KEY:
-    #    try:
-         #   headers = {'hibp-api-key': HIBP_KEY}
-         #   url = f"https://haveibeenpwned.com/api/v3/breachedaccount/{email}"
-          #  response = requests.get(url, headers=headers, timeout=8, verify=False)
-          #  if response.status_code == 200:
-           #     data = response.json()
-             #   result['breaches'] = [b.get('Name', 'Неизвестно') for b in data[:5]]
-            #    result['sources'].append('hibp')
-     #   except Exception as e:
-         #   pass
+    # 2.9 ФОРМИРОВАНИЕ ОТВЕТА
+    if result['valid_format'] and result['mx_exists'] and result['smtp_status'] == '✅ Существует':
+        status_icon = "✅"
+        status_text = "ВАЛИДНЫЙ (РЕАЛЬНЫЙ)"
+    elif result['valid_format'] and result['domain_exists'] and result['mx_exists']:
+        status_icon = "⚠️"
+        status_text = "ФОРМАТ И ДОМЕН ВЕРНЫ, НО ПОЧТА НЕ ПРОВЕРЕНА"
+    elif result['valid_format']:
+        status_icon = "⚠️"
+        status_text = "ФОРМАТ ВЕРЕН, НО ДОМЕН НЕ СУЩЕСТВУЕТ"
+    else:
+        status_icon = "❌"
+        status_text = "НЕВАЛИДНЫЙ ФОРМАТ"
     
-    # ==========================================
-    # 2.10 ABSTRACT API
-    # ==========================================
- #   if ABSTRACT_KEY:
-    #    try:
-         #   url = f"https://emailvalidation.abstractapi.com/v1/?api_key={ABSTRACT_KEY}&email={email}"
-         #   response = requests.get(url, timeout=8, verify=False)
-          #  data = response.json()
-           # if data.get('deliverability'):
-               # result['sources'].append('abstract')
-    #    except Exception as e:
-         #   pass
+    if result['fraud_score'] >= 80:
+        risk_text = "🔴 ВЫСОКИЙ РИСК"
+    elif result['fraud_score'] >= 50:
+        risk_text = "🟡 СРЕДНИЙ РИСК"
+    else:
+        risk_text = "🟢 НИЗКИЙ РИСК"
     
-    # ==========================================
-# 2.11 ФОРМИРОВАНИЕ ОТВЕТА
-# ==========================================
-if result['valid_format'] and result['mx_exists'] and result['smtp_status'] == '✅ Существует':
-    status_icon = "✅"
-    status_text = "ВАЛИДНЫЙ (РЕАЛЬНЫЙ)"
-elif result['valid_format'] and result['domain_exists'] and result['mx_exists']:
-    status_icon = "⚠️"
-    status_text = "ФОРМАТ И ДОМЕН ВЕРНЫ, НО ПОЧТА НЕ ПРОВЕРЕНА"
-elif result['valid_format']:
-    status_icon = "⚠️"
-    status_text = "ФОРМАТ ВЕРЕН, НО ДОМЕН НЕ СУЩЕСТВУЕТ"
-else:
-    status_icon = "❌"
-    status_text = "НЕВАЛИДНЫЙ ФОРМАТ"
+    if result['age'] != 'Неизвестно':
+        age_text = f"{result['age']} дней" if result['age'] < 365 else f"{result['age'] // 365} лет"
+    else:
+        age_text = "Неизвестно"
+    
+    breaches_text = "\n".join([f"   • {b}" for b in result['breaches']]) if result['breaches'] else "   • Не найдено"
+    
+    return (
+        f"📧 *СУПЕР-ПРОВЕРКА EMAIL*\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"{status_icon} *Статус:* {status_text}\n"
+        f"📧 *Email:* `{email}`\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"🌐 *Домен:* {result['domain']}\n"
+        f"📡 *MX-записи:* {'✅ Есть' if result['mx_exists'] else '❌ Нет'}\n"
+        f"📬 *SMTP-проверка:* {result['smtp_status']}\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"🗑️ *Временная почта:* {'✅ Да' if result['is_disposable'] else '❌ Нет'}\n"
+        f"👔 *Ролевой email:* {'✅ Да' if result['is_role'] else '❌ Нет'}\n"
+        f"📅 *Возраст домена:* {age_text}\n"
+        f"👤 *Регистратор:* {result['registrar']}\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"⚠️ *Оценка риска:* {risk_text} ({result['fraud_score']}/100)\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"🔓 *Утечки данных:*\n{breaches_text}\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"📊 *Источники:* {', '.join(result['sources']) if result['sources'] else 'Только локальная проверка'}\n"
+        f"🕒 {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+    )
 
-if result['fraud_score'] >= 80:
-    risk_text = "🔴 ВЫСОКИЙ РИСК"
-elif result['fraud_score'] >= 50:
-    risk_text = "🟡 СРЕДНИЙ РИСК"
-else:
-    risk_text = "🟢 НИЗКИЙ РИСК"
 
-if result['age'] != 'Неизвестно':
-    age_text = f"{result['age']} дней" if result['age'] < 365 else f"{result['age'] // 365} лет"
-else:
-    age_text = "Неизвестно"
-
-breaches_text = "\n".join([f"   • {b}" for b in result['breaches']]) if result['breaches'] else "   • Не найдено"
-
-return (
-    f"📧 *СУПЕР-ПРОВЕРКА EMAIL*\n"
-    f"━━━━━━━━━━━━━━━━━━━━━━\n"
-    f"{status_icon} *Статус:* {status_text}\n"
-    f"📧 *Email:* `{email}`\n"
-    f"━━━━━━━━━━━━━━━━━━━━━━\n"
-    f"🌐 *Домен:* {result['domain']}\n"
-    f"📡 *MX-записи:* {'✅ Есть' if result['mx_exists'] else '❌ Нет'}\n"
-    f"📬 *SMTP-проверка:* {result['smtp_status']}\n"
-    f"━━━━━━━━━━━━━━━━━━━━━━\n"
-    f"🗑️ *Временная почта:* {'✅ Да' if result['is_disposable'] else '❌ Нет'}\n"
-    f"👔 *Ролевой email:* {'✅ Да' if result['is_role'] else '❌ Нет'}\n"
-    f"📅 *Возраст домена:* {age_text}\n"
-    f"👤 *Регистратор:* {result['registrar']}\n"
-    f"━━━━━━━━━━━━━━━━━━━━━━\n"
-    f"⚠️ *Оценка риска:* {risk_text} ({result['fraud_score']}/100)\n"
-    f"━━━━━━━━━━━━━━━━━━━━━━\n"
-    f"🔓 *Утечки данных:*\n{breaches_text}\n"
-    f"━━━━━━━━━━━━━━━━━━━━━━\n"
-    f"📊 *Источники:* {', '.join(result['sources']) if result['sources'] else 'Только локальная проверка'}\n"
-    f"🕒 {datetime.now().strftime('%d.%m.%Y %H:%M')}"
-)
-
+    
 # ================================================================
 # 3. СУПЕР-ПРОВЕРКА КАРТЫ (~350 строк)
 # ================================================================
